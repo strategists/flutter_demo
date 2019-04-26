@@ -10,14 +10,17 @@ import 'app_bar.dart' as app_bar;
 import 'home_page.dart';
 import 'login_page.dart';
 import 'splash_page.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'model/main_model.dart';
 
 //void main() => runApp(MyApp());
 void main() {
   runApp(MyApp());
   if (Platform.isAndroid) {
     /// 以下两行 设置android状态栏为透明的沉浸。写在组件渲染之后，是为了在渲染后进行set赋值，覆盖状态栏，写在渲染之前MaterialApp组件会覆盖掉这个值。
-    SystemUiOverlayStyle systemUiOverlayStyle =
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent,statusBarIconBrightness: Brightness.dark);
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 }
@@ -34,6 +37,13 @@ class MyApp extends StatelessWidget {
     map[HomePage.sName] = (context) {
       return HomePage();
     };
+    return ScopedModel<MainModel>(
+      model: MainModel(),
+      child: _buildMaterialApp(),
+    );
+  }
+
+  MaterialApp _buildMaterialApp() {
     return MaterialApp(
       title: '远程下户',
       theme: ThemeData(
