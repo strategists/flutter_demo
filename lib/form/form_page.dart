@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
 import 'package:flutter_demo/media/media_page.dart';
 import 'package:flutter_demo/widget/gather_page.dart';
 import 'package:flutter_demo/rtc/trtc_page.dart';
@@ -13,6 +15,36 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+  // Get battery level.
+  String _batteryLevel = 'Unknown battery level.';
+  MethodChannel _methodChannel =
+      new MethodChannel("samples.flutter.io/device_info");
+
+  void _getBatteryLevel() async {
+    String batteryLevel;
+    try {
+      var battery = await _methodChannel.invokeMethod("getBatteryLevel");
+      batteryLevel = 'Battery level at $battery % .';
+    } on PlatformException catch (e) {
+      batteryLevel = "Failed to get battery level: '${e.message}'.";
+    }
+
+    setState(() {
+      _batteryLevel = batteryLevel;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getBatteryLevel();
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -28,6 +60,16 @@ class _FormPageState extends State<FormPage> {
   Widget _buildBody(BuildContext context) {
     var stack = Stack(
       children: <Widget>[
+        Column(
+          children: <Widget>[
+            Text("电池电量：$_batteryLevel"),
+            RaisedButton(
+              onPressed: () {
+                _getBatteryLevel();
+              },
+            ),
+          ],
+        ),
         Align(
           alignment: Alignment.bottomCenter,
           child: _buildBottomCard(),
@@ -81,8 +123,7 @@ class _FormPageState extends State<FormPage> {
       onPressed: () {
         Navigator.push(
           context,
-          new MaterialPageRoute(
-              builder: (context) => MediaPage()),
+          new MaterialPageRoute(builder: (context) => MediaPage()),
         );
       },
       textColor: Colors.white,

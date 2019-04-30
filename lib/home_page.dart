@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'home_content.dart';
 import 'login_page.dart';
+import 'package:flutter_demo/page/house_page.dart';
+import 'package:flutter_demo/page/me_page.dart';
+import 'package:flutter_demo/page/receivable_page.dart';
 
 const String sName = "HomePage";
 
@@ -15,6 +18,9 @@ class HomePage extends StatefulWidget {
 class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   Animation<double> tween;
   AnimationController controller;
+
+  int _currentIndex = 0;
+  String _title = "远程下户";
 
   @override
   void initState() {
@@ -91,33 +97,54 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
           IconButton(icon: Icon(Icons.exit_to_app), onPressed: _onLogout)
         ],
         centerTitle: true,
-        title: Text("远程下户"),
+        title: Text(_title),
         leading: IconButton(icon: Icon(Icons.refresh), onPressed: _onRefresh),
       ),
-      body: ConstrainedBox(
-        constraints: BoxConstraints.expand(),
-        child: Stack(
-          alignment: AlignmentDirectional.topStart,
-          textDirection: TextDirection.ltr,
-          overflow: Overflow.visible,
-          fit: StackFit.loose,
-          children: <Widget>[
-            Column(
-//              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Container(
-                  height: 200,
-                  color: Colors.blue,
-                ),
-                Container(
-                  color: Colors.white,
-                )
-              ],
-            ),
-            Content()
-          ],
+      body: _buildBody(),
+      drawer: SafeArea(
+        child: Container(
+          color: Colors.white,
         ),
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildBody() {
+    Widget widget;
+    if (_currentIndex == 0) {
+      return HousePage();
+    } else if (_currentIndex == 1) {
+      return MePage();
+    } else if (_currentIndex == 2) {
+      return ReceivablePage();
+    }
+    return widget;
+  }
+
+  BottomNavigationBar _buildBottomNavigationBar() {
+    var barItems = <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+            activeIcon: Icon(Icons.home),
+            icon: Icon(Icons.my_location),
+            title: Text("远程下户")),
+        BottomNavigationBarItem(
+            activeIcon: Icon(Icons.monetization_on),
+            icon: Icon(Icons.money_off),
+            title: Text("应收通")),
+        BottomNavigationBarItem(
+            activeIcon: Icon(Icons.adjust),
+            icon: Icon(Icons.account_circle),
+            title: Text("我的")),
+      ];
+    return BottomNavigationBar(
+      onTap: (i) {
+        setState(() {
+          _currentIndex = i;
+        });
+      },
+      currentIndex: _currentIndex,
+      items: barItems,
     );
   }
 }

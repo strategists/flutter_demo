@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/widget/gather_page.dart';
 import 'package:flutter_demo/rtc/trtc_page.dart';
 import 'package:flutter_demo/style/my_color.dart';
-import 'package:android_intent/android_intent.dart';
+//import 'package:android_intent/android_intent.dart';
 import 'dart:async';
 import 'dart:io';
+//import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MediaPage extends GatherPage {
   MediaPage()
@@ -21,6 +23,7 @@ class MediaListBody extends StatefulWidget {
 class _MediaListBodyState extends State<MediaListBody> {
   var _list = <String>[];
   var _outlineButtonText = '立即拍照';
+  File _imageFile;
 
   ScrollController _scrollController;
 
@@ -98,11 +101,7 @@ class _MediaListBodyState extends State<MediaListBody> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Image.asset(
-                    'images/perloader_icon.png',
-                    height: 96,
-                    width: 96,
-                  ),
+                  _buildSampleImage(),
 //                  VerticalDivider(color: const Color(0xFFD9DFE7),),
                   SizedBox(
                     width: 0.0,
@@ -123,23 +122,9 @@ class _MediaListBodyState extends State<MediaListBody> {
                       ),
                     ),
                   ),
-                  Image.asset(
-                    'images/perloader_icon.png',
-                    height: 96,
-                    width: 96,
-                  ),
+                  _buildSampleImage(),
                   OutlineButton(
-                    onPressed: () {
-                      if (Platform.isAndroid) {
-                        AndroidIntent intent = AndroidIntent(
-                          action: 'action_view',
-                          data: 'https://play.google.com/store/apps/details?'
-                              'id=com.google.android.apps.myapp',
-                          arguments: {'authAccount': ""},
-                        );
-                        intent.launch();
-                      }
-                    },
+                    onPressed: _takePhoto,
                     child: Text(
                       _outlineButtonText,
                       style: TextStyle(
@@ -174,4 +159,66 @@ class _MediaListBodyState extends State<MediaListBody> {
           ),
         ));
   }
+
+  Widget _buildSampleImage() {
+    var image = Image.asset(
+      'images/perloader_icon.png',
+      height: 96,
+      width: 96,
+    );
+    return InkWell(
+      onTap: () async {
+        try {
+          var _imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+          print(_imageFile);
+        } catch (e) {
+//            _pickImageError = e;
+        }
+        setState(() {});
+      },
+      child: _imageFile == null
+          ? image
+          : Image.file(
+              _imageFile,
+              height: 96,
+              width: 96,
+            ),
+    );
+  }
+
+  /*拍照*/
+  _takePhoto() async {
+    print("take");
+    try {
+      _imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+      print(_imageFile);
+    } on Exception catch (e) {
+      print(e);
+    }
+    setState(() {});
+  }
+
+  /*相册*/
+  _openGallery() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFile = image;
+    });
+  }
+
+  /*void launchCamera() {
+    if (Platform.isAndroid) {
+      checkPermission();
+      AndroidIntent intent = AndroidIntent(
+        action: 'android.media.action.IMAGE_CAPTURE',
+        arguments: {'authAccount': ""},
+      );
+      intent.launch();
+    }
+  }*/
+
+/*  void checkPermission() async {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.camera]);
+  }*/
 }
