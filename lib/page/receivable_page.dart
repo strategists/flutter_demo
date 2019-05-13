@@ -11,6 +11,6 @@ class _ReceivablePageState extends State<ReceivablePage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container();
+    return Container(color: Colors.white,);
   }
 }

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/widget/gather_page.dart';
 import 'package:flutter_demo/rtc/trtc_page.dart';
 import 'package:flutter_demo/style/my_color.dart';
+
 //import 'package:android_intent/android_intent.dart';
 import 'dart:async';
 import 'dart:io';
+
 //import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MediaPage extends GatherPage {
   MediaPage()
@@ -122,7 +125,7 @@ class _MediaListBodyState extends State<MediaListBody> {
                       ),
                     ),
                   ),
-                  _buildSampleImage(),
+                  _buildThumbImage(),
                   OutlineButton(
                     onPressed: _takePhoto,
                     child: Text(
@@ -151,13 +154,47 @@ class _MediaListBodyState extends State<MediaListBody> {
                   Text(
                     "注意：图片需可见小区名、街道号等，至少1张",
                     style:
-                        TextStyle(fontSize: 12, color: const Color(0xFF878787)),
+                    TextStyle(fontSize: 12, color: const Color(0xFF878787)),
                   )
                 ],
               ),
             ],
           ),
         ));
+  }
+
+  Widget _buildThumbImage() {
+    var image = Image.network(
+      "http://via.placeholder.com/350x150",
+      width: 96.0,
+      height: 96.0,
+    );
+
+    CachedNetworkImage(
+      imageUrl: "http://via.placeholder.com/350x150",
+      placeholder: (context, url) => new CircularProgressIndicator(),
+      errorWidget: (context, url, error) => new Icon(Icons.error),
+    );
+    return InkWell(
+      onTap: () async {
+        try {
+          var _imageFile =
+          await ImagePicker.pickImage(source: ImageSource.gallery);
+          print(_imageFile);
+        } catch (e) {
+//            _pickImageError = e;
+        }
+        setState(() {});
+      },
+      child: _imageFile == null
+          ? Image(image: new CachedNetworkImageProvider(
+          "http://via.placeholder.com/350x150"), width: 96.0, height: 96.0,)
+          : Image.file(
+        _imageFile,
+        height: 96,
+        width: 96,
+      ),
+    );
   }
 
   Widget _buildSampleImage() {
@@ -169,7 +206,8 @@ class _MediaListBodyState extends State<MediaListBody> {
     return InkWell(
       onTap: () async {
         try {
-          var _imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+          var _imageFile =
+          await ImagePicker.pickImage(source: ImageSource.gallery);
           print(_imageFile);
         } catch (e) {
 //            _pickImageError = e;
@@ -179,10 +217,10 @@ class _MediaListBodyState extends State<MediaListBody> {
       child: _imageFile == null
           ? image
           : Image.file(
-              _imageFile,
-              height: 96,
-              width: 96,
-            ),
+        _imageFile,
+        height: 96,
+        width: 96,
+      ),
     );
   }
 
@@ -206,7 +244,7 @@ class _MediaListBodyState extends State<MediaListBody> {
     });
   }
 
-  /*void launchCamera() {
+/*void launchCamera() {
     if (Platform.isAndroid) {
       checkPermission();
       AndroidIntent intent = AndroidIntent(

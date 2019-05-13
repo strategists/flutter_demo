@@ -11,6 +11,7 @@ import 'home_page.dart';
 import 'login_page.dart';
 import 'splash_page.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:provide/provide.dart';
 import 'model/main_model.dart';
 
 //void main() => runApp(MyApp());
@@ -37,8 +38,12 @@ class MyApp extends StatelessWidget {
     map[HomePage.sName] = (context) {
       return HomePage();
     };
-    return ScopedModel<MainModel>(
-      model: MainModel(),
+    final providers = Providers()
+      ..provide(
+        Provider.value(MainModel()),
+      );
+    return ProviderNode(
+      providers: providers,
       child: _buildMaterialApp(),
     );
   }

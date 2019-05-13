@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provide/provide.dart';
+import 'package:flutter_demo/model/main_model.dart';
 
 const int x = 5;
 const String sName = "Login";
@@ -36,13 +38,34 @@ class _LoginPageState extends State<LoginPage> {
 
   void _read() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String cacheMobile =  prefs.getString('mobile_num');
+    String cacheMobile = prefs.getString('mobile_num');
     telController.text = cacheMobile;
   }
 
   void _login() {
     _write();
-    Navigator.of(context).pushReplacementNamed(HomePage.sName);
+//    Navigator.of(context).pushReplacementNamed(HomePage.sName);
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+          pageBuilder: (BuildContext context, Animation<double> animation,
+                  Animation<double> secondaryAnimation) =>
+              HomePage(),
+          transitionDuration: Duration(milliseconds: 1000),
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return new FadeTransition(
+              opacity: animation,
+              child: new RotationTransition(
+                turns:
+                    new Tween<double>(begin: 0.0, end: 1.0).animate(animation),
+                child: child,
+              ),
+            );
+          }),
+    );
   }
 
   bool mobileOk() {
@@ -70,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
           } else if (!authCodeOk()) {
             showSnackBar(context, '请输入验证码');
           } else {
+            Provide.value<MainModel>(context).set(true);
             _login();
           }
         },

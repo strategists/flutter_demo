@@ -54,17 +54,14 @@ class _MultitermState extends State<Multiterm> {
         Navigator.push(
           context,
           new PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 1000),
-            pageBuilder: (context, animation, animation1) => FormPage(),
-            transitionsBuilder: (context, Animation<double> animation, animation1, Widget child) =>
-                    new FadeTransition(
-                      opacity: animation,
-                      child: new RotationTransition(
-                        turns: new Tween<double>(begin: 0.0, end: 1.0)
-                            .animate(animation),
-                        child: child,
-                      ),
-                    ),
+            transitionDuration: const Duration(milliseconds: 500),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return new FadeTransition(
+                //使用渐隐渐入过渡,
+                opacity: animation,
+                child: FormPage(),
+              );
+            },
           ),
         );
       },

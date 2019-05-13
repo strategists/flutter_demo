@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluttertoast/fluttertoast.dart' as FlutterToast;
 import 'home_content.dart';
 import 'login_page.dart';
 import 'package:flutter_demo/page/house_page.dart';
 import 'package:flutter_demo/page/me_page.dart';
 import 'package:flutter_demo/page/receivable_page.dart';
+import 'package:flutter_demo/widget/toast.dart';
+import 'package:provide/provide.dart';
+import 'package:flutter_demo/model/main_model.dart';
 
 const String sName = "HomePage";
 
@@ -17,7 +20,8 @@ class HomePage extends StatefulWidget {
 
 class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   Animation<double> tween;
-  AnimationController controller;
+  AnimationController _controller;
+  PageController _pageController;
 
   int _currentIndex = 0;
   String _title = "远程下户";
@@ -26,29 +30,31 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     /*创建动画控制类对象*/
-    controller = new AnimationController(
+    _controller = new AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
 
     /*创建补间对象*/
-    tween = new Tween(begin: 0.0, end: 1.0).animate(controller) //返回Animation对象
+    tween = new Tween(begin: 0.0, end: 1.0).animate(_controller) //返回Animation对象
       ..addListener(() {
         //添加监听
         setState(() {
 //          print(tween.value); //打印补间插值
         });
       });
-    controller.forward(); //执行动画
+    _controller.forward(); //执行动画
+    _pageController = new PageController();
   }
 
   void _onRefresh() {
     print("debug");
-    Fluttertoast.showToast(
+    /* Fluttertoast.showToast(
         msg: "刷新数据",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIos: 1,
         backgroundColor: Colors.white,
-        textColor: Colors.black);
+        textColor: Colors.black);*/
+    Toast.show("刷新成功", context, type: Toast.SUCCESS);
   }
 
   void _onLogout() {
@@ -66,10 +72,12 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
                   new FlatButton(
                     child: new Text("确认"),
                     onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginPage.sName,
+                      /*Navigator.of(context).pushNamedAndRemoveUntil(
+                    LoginPage.sName,
                         (Route<dynamic> route) => false,
-                      );
+                  );*/
+                      Provide.value<MainModel>(context).set(false);
+                      Navigator.of(context).pop();
                     },
                   )
                 ]));
@@ -77,7 +85,7 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
 
   void _startAnim() {
     setState(() {
-      controller.forward(from: 0.0);
+      _controller.forward(from: 0.0);
     });
   }
 
@@ -85,7 +93,8 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   void dispose() {
     super.dispose();
     //销毁控制器对象
-    controller.dispose();
+    _controller.dispose();
+    _pageController.dispose();
   }
 
   @override
@@ -111,6 +120,14 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildBody() {
+    return PageView(
+      children: <Widget>[HousePage(), ReceivablePage(), MePage()],
+      controller: _pageController,
+      onPageChanged: (index) => setState(() {
+            _currentIndex = index;
+          }),
+      physics: NeverScrollableScrollPhysics(),
+    );
     Widget widget;
     if (_currentIndex == 0) {
       return HousePage();
@@ -124,25 +141,21 @@ class _HomeState extends State<HomePage> with SingleTickerProviderStateMixin {
 
   BottomNavigationBar _buildBottomNavigationBar() {
     var barItems = <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-            activeIcon: Icon(Icons.home),
-            icon: Icon(Icons.my_location),
-            title: Text("远程下户")),
-        BottomNavigationBarItem(
-            activeIcon: Icon(Icons.monetization_on),
-            icon: Icon(Icons.money_off),
-            title: Text("应收通")),
-        BottomNavigationBarItem(
-            activeIcon: Icon(Icons.adjust),
-            icon: Icon(Icons.account_circle),
-            title: Text("我的")),
-      ];
+      BottomNavigationBarItem(
+          activeIcon: Icon(Icons.home),
+          icon: Icon(Icons.my_location),
+          title: Text("远程下户")),
+      BottomNavigationBarItem(
+          activeIcon: Icon(Icons.monetization_on),
+          icon: Icon(Icons.money_off),
+          title: Text("应收通")),
+      BottomNavigationBarItem(
+          activeIcon: Icon(Icons.adjust),
+          icon: Icon(Icons.account_circle),
+          title: Text("我的")),
+    ];
     return BottomNavigationBar(
-      onTap: (i) {
-        setState(() {
-          _currentIndex = i;
-        });
-      },
+      onTap: (i) => _pageController.jumpToPage(i),
       currentIndex: _currentIndex,
       items: barItems,
     );

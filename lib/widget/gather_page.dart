@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class GatherPage extends StatefulWidget {
   final String title;
@@ -108,8 +109,12 @@ class _GatherPageState extends State<GatherPage> {
             (Route<dynamic> route) => false,
           );
         } else {
-          Navigator.push(context,
-              new MaterialPageRoute(builder: (context) => widget.targetPage));
+          /* Navigator.push(context,
+              new MaterialPageRoute(builder: (context) => widget.targetPage));*/
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => widget.targetPage),
+          );
         }
       },
       textColor: Colors.white,

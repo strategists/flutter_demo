@@ -29,6 +29,9 @@ dependencies:
 #  permission_handler: ^3.0.1
   image_picker: ^0.6.0+1
 #  permission: ^0.1.1
+  provide: ^1.0.2 #数据管理层
+  cached_network_image: ^0.8.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
