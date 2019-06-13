@@ -154,7 +154,7 @@ class _MediaListBodyState extends State<MediaListBody> {
                   Text(
                     "注意：图片需可见小区名、街道号等，至少1张",
                     style:
-                    TextStyle(fontSize: 12, color: const Color(0xFF878787)),
+                        TextStyle(fontSize: 12, color: const Color(0xFF878787)),
                   )
                 ],
               ),
@@ -176,24 +176,22 @@ class _MediaListBodyState extends State<MediaListBody> {
       errorWidget: (context, url, error) => new Icon(Icons.error),
     );
     return InkWell(
-      onTap: () async {
-        try {
-          var _imageFile =
-          await ImagePicker.pickImage(source: ImageSource.gallery);
-          print(_imageFile);
-        } catch (e) {
-//            _pickImageError = e;
-        }
-        setState(() {});
+      onTap: () {
+        _openGallery();
       },
       child: _imageFile == null
-          ? Image(image: new CachedNetworkImageProvider(
-          "http://via.placeholder.com/350x150"), width: 96.0, height: 96.0,)
+          ? Image(
+              image: new CachedNetworkImageProvider(
+                  "http://via.placeholder.com/350x150"),
+              width: 96.0,
+              height: 96.0,
+            )
           : Image.file(
-        _imageFile,
-        height: 96,
-        width: 96,
-      ),
+              _imageFile,
+              height: 96,
+              width: 96,
+              fit: BoxFit.fill,
+            ),
     );
   }
 
@@ -207,7 +205,7 @@ class _MediaListBodyState extends State<MediaListBody> {
       onTap: () async {
         try {
           var _imageFile =
-          await ImagePicker.pickImage(source: ImageSource.gallery);
+              await ImagePicker.pickImage(source: ImageSource.gallery);
           print(_imageFile);
         } catch (e) {
 //            _pickImageError = e;
@@ -217,10 +215,10 @@ class _MediaListBodyState extends State<MediaListBody> {
       child: _imageFile == null
           ? image
           : Image.file(
-        _imageFile,
-        height: 96,
-        width: 96,
-      ),
+              _imageFile,
+              height: 96,
+              width: 96,
+            ),
     );
   }
 
@@ -237,10 +235,21 @@ class _MediaListBodyState extends State<MediaListBody> {
   }
 
   /*相册*/
-  _openGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _imageFile = image;
+  _openGallery() {
+    ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 96,
+      maxHeight: 96,
+    ).then((onValue) {
+      debugPrint("onValue:$onValue");
+      setState(() {
+        _imageFile = onValue;
+      });
+    }).catchError((error, stack) {
+      debugPrint("error:$error");
+      debugPrint("stack:$stack");
+    }).whenComplete(() {
+      debugPrint("Complete");
     });
   }
 

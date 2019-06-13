@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart' as FlutterToast;
+//import 'package:fluttertoast/fluttertoast.dart' as FlutterToast;
 import 'home_content.dart';
 import 'login_page.dart';
 import 'package:flutter_demo/page/house_page.dart';
@@ -8,6 +8,7 @@ import 'package:flutter_demo/page/receivable_page.dart';
 import 'package:flutter_demo/widget/toast.dart';
 import 'package:provide/provide.dart';
 import 'package:flutter_demo/model/main_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 const String sName = "HomePage";
 
