@@ -11,6 +11,6 @@ class _PhotoViewState extends State<PhotoView> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return null;
+    return Container();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/scroll/scroll.dart';
 import 'package:flutter_demo/image_picker/gallery.dart';
 import 'package:flutter_demo/image_picker/photo_view.dart';
+import 'package:flutter_demo/image_picker/multi_image_page.dart';
 
 class ReceivablePage extends StatefulWidget {
   @override
@@ -41,8 +42,8 @@ class _ReceivablePageState extends State<ReceivablePage> {
               _buildItem("滚动联动", ScrollFoldPage()),
               _buildItem("折叠滚动", ScrollSliverPage()),
               _buildItem("折叠Tab滚动", SliverTabPage()),
-              _buildItem("图片选择", Gallery()),
               _buildItem("图片查看", PhotoView()),
+              _buildItem("多图选择", MultiImagePage()),
             ],
           );
         },
